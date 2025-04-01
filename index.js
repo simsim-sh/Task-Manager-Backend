@@ -3,7 +3,7 @@ const cors = require("cors");
 const dotenv = require("dotenv");
 const connectDB = require("./config/database.js");
 const authRoutes = require("./routes/authRoutes");
-const projectRoutes = require("./routes/project.js");  // ✅ FIXED
+const projectRoutes = require("./routes/project.js");
 
 dotenv.config();
 
@@ -15,7 +15,7 @@ app.use(express.json());
 app.use(cors());
 
 app.use("/api/auth", authRoutes);
-app.use("/api/project", projectRoutes);  // ✅ FIXED
+app.use("/api/project", projectRoutes);
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
