@@ -39,6 +39,7 @@ const ProjectSchema = new mongoose.Schema(
     assignedTo: {
       type: String,
       require: true,
+      enum: ["Marketing Team", "Dev Team", "Design Team"],
     },
     notes: {
       type: String,
