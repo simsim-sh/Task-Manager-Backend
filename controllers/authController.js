@@ -187,3 +187,93 @@ exports.getUserByEmail = async (req, res) => {
     });
   }
 };
+
+exports.updateUser = async (req, res) => {
+  try {
+    const {
+      name,
+      email,
+      userType,
+      designation,
+      permission,
+      postModule,
+      status,
+      termsAccepted,
+    } = req.body;
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    // Update fields if provided
+    if (name) user.name = name;
+    // if (email) user.email = email;
+    // if (password) user.password = await bcrypt.hash(password, 10);
+    if (userType) user.userType = userType;
+    if (designation) user.designation = designation;
+    if (permission) user.permission = permission;
+    if (postModule) {
+      const validPostModules = ["blog", "news", "project"];
+      user.postModule = Array.isArray(postModule)
+        ? postModule.filter((mod) => validPostModules.includes(mod))
+        : validPostModules.includes(postModule)
+        ? [postModule]
+        : user.postModule;
+    }
+    if (status) user.status = status;
+    if (termsAccepted !== undefined) user.termsAccepted = termsAccepted;
+
+    const updatedUser = await user.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "User updated successfully",
+      data: updatedUser,
+    });
+  } catch (error) {
+    console.error("Error updating user:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+      error: error.message,
+    });
+  }
+};
+
+exports.deleteUser = async (req, res) => {
+  try {
+    const { email } = req.params;
+
+    if (!email) {
+      return res.status(400).json({
+        success: false,
+        message: "Email is required",
+      });
+    }
+
+    const user = await User.findOneAndDelete({ email });
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "User deleted successfully",
+      data: user,
+    });
+  } catch (error) {
+    console.error("Error deleting user:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+      error: error.message,
+    });
+  }
+};
