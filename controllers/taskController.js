@@ -13,7 +13,7 @@ exports.createTask = async (req, res) => {
       });
     }
 
-    // Find the related project (Corrected: Use title instead of title)
+    // Find the related project
     const project = await Project.findOne({ title });
     if (!project) {
       return res.status(404).json({
@@ -22,7 +22,7 @@ exports.createTask = async (req, res) => {
       });
     }
 
-    // Check if task already exists (Use let instead of const)
+    // Check if task already exists
     let taskExists = await Task.findOne({ title });
 
     if (taskExists) {

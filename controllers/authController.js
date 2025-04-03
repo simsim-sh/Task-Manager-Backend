@@ -125,3 +125,65 @@ exports.loginUser = async (req, response) => {
     response.status(500).json({ success: false, message: "Server error" });
   }
 };
+
+//all users
+exports.getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find();
+
+    if (!users || users.length === 0) {
+      return res.status(404).json({
+        succes: false,
+        message: "No Users Found",
+      });
+    }
+
+    return res.status(200).json({
+      succes: true,
+      message: "Users Fetch Successfully",
+      data: users,
+    });
+  } catch (error) {
+    console.error("Error fetching tasks:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server error",
+      error: error.message,
+    });
+  }
+};
+
+//get users by ID
+exports.getUserByEmail = async (req, res) => {
+  try {
+    const { email } = req.query;
+
+    if (!email) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "Task not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "User Fetch successfully",
+      data: user,
+    });
+  } catch (error) {
+    console.error("Error fetching task:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
+};
