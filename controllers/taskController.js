@@ -1,5 +1,6 @@
 const Project = require("../models/project");
 const Task = require("../models/task");
+const User = require("../models/User");
 
 // Create task
 exports.createTask = async (req, res) => {
@@ -22,11 +23,20 @@ exports.createTask = async (req, res) => {
       });
     }
 
+    // Find user by name (assignedToWork is a name)
+    const assignedName = await User.findOne({ name: assignedToWork });
+    if (!assignedName) {
+      return res.status(404).json({
+        success: false,
+        message: "Assigned User Name not found",
+      });
+    }
+
     // Check if task already exists
     let taskExists = await Task.findOne({ title });
 
     if (taskExists) {
-      // Update the existing task
+      // Update existing task
       taskExists.hours = hours;
       taskExists.priority = priority;
       taskExists.assignedToWork = assignedToWork;
@@ -40,14 +50,14 @@ exports.createTask = async (req, res) => {
         data: taskExists,
       });
     } else {
-      // Create a new task
+      // Create new task
       const newTask = new Task({
         title,
         category: project.category,
         assignedTo: project.assignedTo,
         hours,
         priority,
-        assignedToWork,
+        assignedToWork, // this is the user's name
         status,
       });
 
