@@ -135,7 +135,7 @@ exports.getTaskById = async (req, res) => {
 // Delete task by ID
 exports.deleteTaskByTitle = async (req, res) => {
   try {
-    const { title } = req.query;
+    const { title } = req.query; // ✅ FIXED: query instead of params
 
     if (!title) {
       return res.status(400).json({
@@ -166,3 +166,4 @@ exports.deleteTaskByTitle = async (req, res) => {
     });
   }
 };
+

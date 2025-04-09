@@ -45,11 +45,13 @@ const ProjectSchema = new mongoose.Schema(
       type: String,
       require: true,
     },
-    status: {
-      type: String,
-      require: true,
-      default: "Pending",
-    },
+   status: {
+  type: String,
+  required: true,
+  enum: ["Pending", "In Progress", "Completed", "On Hold", "Cancelled"], // Optional but helpful
+  default: "Pending",
+}
+
   },
   {
     timestamps: true,
