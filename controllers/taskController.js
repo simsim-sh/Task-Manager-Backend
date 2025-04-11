@@ -5,9 +5,9 @@ const User = require("../models/User");
 // Create task
 exports.createTask = async (req, res) => {
   try {
-    const { title, hours, priority, assignedToWork, status } = req.body;
+    const { title, taskName, hours, priority, assignedToWork, status } = req.body;
 
-    if (!title || !hours || !priority || !assignedToWork || !status) {
+    if (!title || !taskName|| !hours || !priority || !assignedToWork || !status) {
       return res.status(400).json({
         success: false,
         message: "All fields are required",
@@ -53,6 +53,7 @@ exports.createTask = async (req, res) => {
       // Create new task
       const newTask = new Task({
         title,
+        taskName,
         category: project.category,
         assignedTo: project.assignedTo,
         hours,

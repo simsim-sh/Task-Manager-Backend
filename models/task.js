@@ -7,6 +7,10 @@ const TaskSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
+    taskName: {
+      type: String, 
+      required: true,
+    },
     category: {
       type: String,
       require: true,
@@ -33,7 +37,7 @@ const TaskSchema = new mongoose.Schema(
     status: {
       type: String,
       required: true,
-      enum: ["Fresh", "In Progress", "Completed" ,"Active", "Inactive" ,"Overdue" ,"On Hold"],
+      enum: ["Fresh", "In Progress", "Completed" ,"Active", "Inactive" ,"Overdue" ,"hold"],
       default: "Fresh",
     },
   },
