@@ -221,7 +221,6 @@ exports.deleteProjectById = async (req, res) => {
   }
 };
 
-
 // Get project status summary
 exports.getProjectStatusSummary = async (req, res) => {
   try {
@@ -229,12 +228,16 @@ exports.getProjectStatusSummary = async (req, res) => {
       {
         $group: {
           _id: "$status",
-          count: { $sum: 1 }
-        }
-      }
+          count: { $sum: 1 },
+        },
+      },
     ]);
 
-    res.status(200).json({ success: true, data: summary });
+    res.status(200).json({
+      success: true,
+      message: "summary Fetch successfully",
+      data: summary,
+    });
   } catch (error) {
     console.error("Error fetching project status summary:", error);
     res.status(500).json({ success: false, message: "Server error" });
