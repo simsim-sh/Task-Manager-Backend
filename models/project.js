@@ -7,6 +7,10 @@ const ProjectSchema = new mongoose.Schema(
       require: true,
       unique: true,
     },
+    // name: {
+    //   type: String,
+    //   required: true,
+    // },
     category: {
       type: String,
       require: true,
@@ -48,7 +52,7 @@ const ProjectSchema = new mongoose.Schema(
    status: {
   type: String,
   required: true,
-  enum: ["Pending", "In Progress", "Completed", "On Hold", "Cancelled"], // Optional but helpful
+  enum: ["fresh", "In Progress", "Completed", "Hold", "Active"],
   default: "Pending",
 }
 

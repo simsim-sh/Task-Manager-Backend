@@ -1,6 +1,77 @@
 const Project = require("../models/project");
 
 // Create project
+// exports.createProject = async (req, res) => {
+//   try {
+//     const {
+//       title,
+//       category,
+//       description,
+//       companyName,
+//       contactPerson,
+//       contactPhone,
+//       contactEmail,
+//       address,
+//       assignedTo,
+//       notes,
+//       status,
+//     } = req.body;
+
+//     if (
+//       !title ||
+//       !category ||
+//       !description ||
+//       !companyName ||
+//       !contactPerson ||
+//       !contactPhone ||
+//       !contactEmail ||
+//       !address ||
+//       !assignedTo ||
+//       !notes
+//     ) {
+//       return res
+//         .status(400)
+//         .json({ success: false, message: "All fields are required" });
+//     }
+
+//     // Ensure user is authenticated
+//     if (!req.user || !req.user.name) {
+//       return res.status(401).json({ success: false, message: "Unauthorized" });
+//     }
+
+//     const projectExists = await Project.findOne({ title });
+//     if (projectExists) {
+//       return res
+//         .status(400)
+//         .json({ success: false, message: "Project already exists" });
+//     }
+
+//     const newProject = await Project.create({
+//       title,
+//       name: req.user.name, // auto-filled from logged-in user
+//       category,
+//       description,
+//       companyName,
+//       contactPerson,
+//       contactPhone,
+//       contactEmail,
+//       address,
+//       assignedTo,
+//       notes,
+//       status: status || "Pending",
+//     });
+
+//     res.status(201).json({
+//       success: true,
+//       message: "Project created successfully!",
+//       data: newProject,
+//     });
+//   } catch (error) {
+//     console.error("Error creating project:", error);
+//     res.status(500).json({ success: false, message: "Server error" });
+//   }
+// };
+
 exports.createProject = async (req, res) => {
   try {
     const {
