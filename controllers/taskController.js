@@ -5,16 +5,62 @@ const User = require("../models/User");
 // Create task
 exports.createTask = async (req, res) => {
   try {
-    const { title, taskName, hours, priority, assignedToWork, status } = req.body;
+    let {
+      title,
+      taskName,
+      hours,
+      priority,
+      assignedToWork,
+      status,
+      startDate,
+      endDate,
+    } = req.body;
 
-    if (!title || !taskName|| !hours || !priority || !assignedToWork || !status) {
+    // Trim string fields
+    title = title?.trim();
+    taskName = taskName?.trim();
+    priority = priority?.trim();
+    assignedToWork = assignedToWork?.trim();
+    status = status?.trim();
+
+    // Convert date strings to timestamps (or use Date if your schema supports it)
+    const startTimestamp = new Date(startDate).getTime();
+    const endTimestamp = new Date(endDate).getTime();
+
+    // Required field check
+    if (
+      !title ||
+      !taskName ||
+      !hours ||
+      !priority ||
+      !assignedToWork ||
+      !status ||
+      !startTimestamp ||
+      !endTimestamp
+    ) {
       return res.status(400).json({
         success: false,
         message: "All fields are required",
       });
     }
 
-    // Find the related project
+    // Validate taskName against allowed values
+    const validTaskNames = [
+      "UI_Design",
+      "UI_Creation",
+      "Testing",
+      "Integraton",
+    ];
+    if (!validTaskNames.includes(taskName)) {
+      return res.status(400).json({
+        success: false,
+        message: `Invalid taskName. Allowed values are: ${validTaskNames.join(
+          ", "
+        )}`,
+      });
+    }
+
+    // Find related project
     const project = await Project.findOne({ title });
     if (!project) {
       return res.status(404).json({
@@ -23,7 +69,7 @@ exports.createTask = async (req, res) => {
       });
     }
 
-    // Find user by name (assignedToWork is a name)
+    // Validate assigned user
     const assignedName = await User.findOne({ name: assignedToWork });
     if (!assignedName) {
       return res.status(404).json({
@@ -32,12 +78,15 @@ exports.createTask = async (req, res) => {
       });
     }
 
-    // Check if task already exists
+    // Check for existing task
     let taskExists = await Task.findOne({ title });
 
     if (taskExists) {
-      // Update existing task
+      // Update task
+      taskExists.taskName = taskName;
       taskExists.hours = hours;
+      taskExists.startDate = startTimestamp;
+      taskExists.endDate = endTimestamp;
       taskExists.priority = priority;
       taskExists.assignedToWork = assignedToWork;
       taskExists.status = status;
@@ -50,7 +99,7 @@ exports.createTask = async (req, res) => {
         data: taskExists,
       });
     } else {
-      // Create new task
+      // Create task
       const newTask = new Task({
         title,
         taskName,
@@ -58,7 +107,9 @@ exports.createTask = async (req, res) => {
         assignedTo: project.assignedTo,
         hours,
         priority,
-        assignedToWork, // this is the user's name
+        assignedToWork,
+        startDate: startTimestamp,
+        endDate: endTimestamp,
         status,
       });
 
@@ -72,7 +123,7 @@ exports.createTask = async (req, res) => {
     }
   } catch (error) {
     console.error("Error creating task:", error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: "Server error",
       error: error.message,
@@ -167,4 +218,3 @@ exports.deleteTaskByTitle = async (req, res) => {
     });
   }
 };
-

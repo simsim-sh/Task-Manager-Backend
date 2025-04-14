@@ -8,8 +8,9 @@ const TaskSchema = new mongoose.Schema(
       unique: true,
     },
     taskName: {
-      type: String, 
+      type: String,
       required: true,
+      enum: ["UI_Design", "UI_Creation", "Testing", "Integraton"],
     },
     category: {
       type: String,
@@ -25,6 +26,14 @@ const TaskSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+    startDate: {
+      type: Date,
+      required: true,
+    },
+    endDate: {
+      type: Date,
+      required: true,
+    },
     priority: {
       type: String,
       required: true,
@@ -37,7 +46,15 @@ const TaskSchema = new mongoose.Schema(
     status: {
       type: String,
       required: true,
-      enum: ["Fresh", "In Progress", "Completed" ,"Active", "Inactive" ,"Overdue" ,"hold"],
+      enum: [
+        "Fresh",
+        "In Progress",
+        "Completed",
+        "Active",
+        "Inactive",
+        "Overdue",
+        "hold",
+      ],
       default: "Fresh",
     },
   },
