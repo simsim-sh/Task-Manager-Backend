@@ -5,6 +5,7 @@ const connectDB = require("./config/database.js");
 const authRoutes = require("./routes/authRoutes");
 const projectRoutes = require("./routes/project.js");
 const taskRoutes = require("./routes/taskRoutes.js");
+const activityRoutes = require("./routes/activityRoutes");
 
 dotenv.config();
 
@@ -18,6 +19,7 @@ app.use(cors());
 app.use("/api/auth", authRoutes);
 app.use("/api/project", projectRoutes);
 app.use("/api/task", taskRoutes);
+app.use("/api/activity", activityRoutes);
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
