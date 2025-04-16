@@ -25,48 +25,6 @@ const createActivity = async (req, res) => {
   }
 };
 
-// Update an existing activity
-const updateActivity = async (req, res) => {
-  try {
-    const { id } = req.params;  // Activity ID to update
-    const updateData = req.body; // New data to update
-
-    // Find the activity by ID and update it
-    const updatedActivity = await Activity.findByIdAndUpdate(id, updateData, {
-      new: true,  // Return the updated activity
-    });
-
-    if (!updatedActivity) {
-      return res.status(404).json({ message: "Activity not found" });
-    }
-
-    res.status(200).json(updatedActivity);
-  } catch (error) {
-    console.error("Error updating activity:", error);
-    res.status(500).json({ message: "Failed to update activity" });
-  }
-};
-
-
-// Delete an activity
-const deleteActivity = async (req, res) => {
-  try {
-    const { id } = req.params;  // Activity ID to delete
-
-    // Find and delete the activity by ID
-    const deletedActivity = await Activity.findByIdAndDelete(id);
-
-    if (!deletedActivity) {
-      return res.status(404).json({ message: "Activity not found" });
-    }
-
-    res.status(200).json({ message: "Activity deleted successfully", data: deletedActivity });
-  } catch (error) {
-    console.error("Error deleting activity:", error);
-    res.status(500).json({ message: "Failed to delete activity" });
-  }
-};
-
 // Function to fetch activities by project name and filter type
 const getActivitiesByProject = async (req, res) => {
   const { projectName, filter } = req.query; // Get projectName and filter from the query params
@@ -107,7 +65,5 @@ const getActivitiesByProject = async (req, res) => {
 module.exports = {
   getAllActivities,
   createActivity,
-    updateActivity,
-  deleteActivity,
   getActivitiesByProject,
 };
