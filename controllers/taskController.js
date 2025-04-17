@@ -218,3 +218,42 @@ exports.deleteTaskByTitle = async (req, res) => {
     });
   }
 };
+
+
+// Get all tasks by project title
+exports.getTasksByTitle = async (req, res) => {
+  try {
+    const { title } = req.params; // ✅ FIXED: query instead of params
+
+    if (!title) {
+      return res.status(400).json({
+        success: false,
+        message: "Title is required to fetch tasks",
+      });
+    }
+
+    const tasks = await Task.find({ title });
+
+    if (!tasks || tasks.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No tasks found for this project",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Tasks fetched successfully",
+      data: tasks,
+    });
+  }
+  catch (error) {
+    console.error("Error fetching tasks:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+      error: error.message,
+    });
+  }
+};
+
