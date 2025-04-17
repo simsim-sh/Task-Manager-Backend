@@ -138,27 +138,29 @@ exports.createProject = async (req, res) => {
 
 // Get project by ID
 exports.getProjectById = async (req, res) => {
+  try {
+    // Validate the projectId format
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid project ID" });
+    }
 
-  
-try {
-  // Validate the projectId format
-  if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-    return res.status(400).json({ success: false, message: "Invalid project ID" });
+    // Find the project by ID
+    const project = await Project.findById(req.params.id);
+
+    if (!project) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Project not found" });
+    }
+    console.log("Project found:", project); // Log the found project for debugging
+
+    res.status(200).json({ success: true, data: project });
+  } catch (error) {
+    console.error("Error fetching project:", error);
+    res.status(500).json({ success: false, message: "Server error" });
   }
-
-  // Find the project by ID
-  const project = await Project.findById(req.params.id);
-
-  if (!project) {
-    return res.status(404).json({ success: false, message: "Project not found" });
-  }
-  console.log("Project found:", project); // Log the found project for debugging
-
-  res.status(200).json({ success: true, data: project });
-} catch (error) {
-  console.error("Error fetching project:", error);
-  res.status(500).json({ success: false, message: "Server error" });
-}
 };
 
 // get all projects

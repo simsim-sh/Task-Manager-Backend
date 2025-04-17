@@ -219,11 +219,10 @@ exports.deleteTaskByTitle = async (req, res) => {
   }
 };
 
-
 // Get all tasks by project title
 exports.getTasksByTitle = async (req, res) => {
   try {
-    const { title } = req.params; // ✅ FIXED: query instead of params
+    const { title } = req.query;
 
     if (!title) {
       return res.status(400).json({
@@ -232,12 +231,11 @@ exports.getTasksByTitle = async (req, res) => {
       });
     }
 
-    const tasks = await Task.find({ title });
-
+    const tasks = await Project.find({ title });
     if (!tasks || tasks.length === 0) {
       return res.status(404).json({
         success: false,
-        message: "No tasks found for this project",
+        message: "No tasks found for this title",
       });
     }
 
@@ -246,8 +244,7 @@ exports.getTasksByTitle = async (req, res) => {
       message: "Tasks fetched successfully",
       data: tasks,
     });
-  }
-  catch (error) {
+  } catch (error) {
     console.error("Error fetching tasks:", error);
     res.status(500).json({
       success: false,
@@ -256,4 +253,3 @@ exports.getTasksByTitle = async (req, res) => {
     });
   }
 };
-

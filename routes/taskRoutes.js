@@ -10,7 +10,7 @@ const router = express.Router();
 
 router.post("/createTask", createTask);
 router.get("/getAllTasks", getAllTasks);
-router.get("/getTaskByTitle/:title", getTasksByTitle);
+router.get("/getTaskByTitle", getTasksByTitle);
 router.get("/getTaskById/:id", getTaskById);
 router.delete("/deleteTask", deleteTaskByTitle);
 
