@@ -20,15 +20,15 @@ exports.createTask = async (req, res) => {
     title = title?.trim();
     taskName = taskName?.trim();
     priority = priority?.trim();
-   // Check if assignedToWork is an array, then trim each user name
-if (Array.isArray(assignedToWork)) {
-  assignedToWork = assignedToWork.map(name => name.trim());
-} else {
-  return res.status(400).json({
-    success: false,
-    message: "assignedToWork should be an array of user names",
-  });
-}
+    // Check if assignedToWork is an array, then trim each user name
+    if (Array.isArray(assignedToWork)) {
+      assignedToWork = assignedToWork.map((name) => name.trim());
+    } else {
+      return res.status(400).json({
+        success: false,
+        message: "assignedToWork should be an array of user names",
+      });
+    }
     status = status?.trim();
 
     // Convert date strings to timestamps (or use Date if your schema supports it)
@@ -195,7 +195,7 @@ exports.getTaskById = async (req, res) => {
 // Delete task by ID
 exports.deleteTaskByTitle = async (req, res) => {
   try {
-    const { title } = req.query; // ✅ FIXED: query instead of params
+    const { title } = req.query;
 
     if (!title) {
       return res.status(400).json({
@@ -239,7 +239,7 @@ exports.getTasksByTitle = async (req, res) => {
       });
     }
 
-    const tasks = await Project.find({ title });
+    const tasks = await Task.find({ title });
     if (!tasks || tasks.length === 0) {
       return res.status(404).json({
         success: false,
