@@ -10,7 +10,7 @@ const TaskSchema = new mongoose.Schema(
     taskName: {
       type: String,
       required: true,
-      enum: ["UI_Design", "UI_Creation", "Testing", "Integraton"],
+      enum: ["UI_Design", "UI_Creation", "Testing", "Integration"],
     },
     category: {
       type: String,
@@ -40,14 +40,16 @@ const TaskSchema = new mongoose.Schema(
       enum: ["Low", "Medium", "High"],
     },
     assignedToWork: {
-      type: String,
+      type: [{
+    type: String,
+  }],
       required: true,
     },
     status: {
       type: String,
       required: true,
       enum: [
-        "Fresh",
+        "New",
         "In Progress",
         "Completed",
         "Active",
@@ -55,7 +57,7 @@ const TaskSchema = new mongoose.Schema(
         "Overdue",
         "hold",
       ],
-      default: "Fresh",
+      default: "New",
     },
   },
   {

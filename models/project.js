@@ -55,6 +55,10 @@ const ProjectSchema = new mongoose.Schema(
       enum: ["New", "In Progress", "Completed", "Hold", "Active"],
       default: "Pending",
     },
+      endDate: {
+      type: Date,
+      required: true,
+    },
   },
   {
     timestamps: true,

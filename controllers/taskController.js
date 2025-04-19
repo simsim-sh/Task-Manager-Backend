@@ -20,7 +20,15 @@ exports.createTask = async (req, res) => {
     title = title?.trim();
     taskName = taskName?.trim();
     priority = priority?.trim();
-    assignedToWork = assignedToWork?.trim();
+   // Check if assignedToWork is an array, then trim each user name
+if (Array.isArray(assignedToWork)) {
+  assignedToWork = assignedToWork.map(name => name.trim());
+} else {
+  return res.status(400).json({
+    success: false,
+    message: "assignedToWork should be an array of user names",
+  });
+}
     status = status?.trim();
 
     // Convert date strings to timestamps (or use Date if your schema supports it)
