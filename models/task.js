@@ -9,7 +9,6 @@ const TaskSchema = new mongoose.Schema(
     taskName: {
       type: String,
       required: true,
-      enum: ["UI_Design", "UI_Creation", "Testing", "Integration"],
     },
     category: {
       type: String,
@@ -39,15 +38,19 @@ const TaskSchema = new mongoose.Schema(
       enum: ["Low", "Medium", "High"],
     },
     assignedToWork: {
-      type: [{
-    type: String,
-  }],
+      type: [
+        {
+          type: String,
+        },
+      ],
       required: true,
     },
     Reviwer: {
-         type: [{
-    type: String,
-  }],
+      type: [
+        {
+          type: String,
+        },
+      ],
       required: true,
     },
     status: {
@@ -63,6 +66,11 @@ const TaskSchema = new mongoose.Schema(
         "hold",
       ],
       default: "New",
+    },
+    projectId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Project",
+      // required: true,
     },
   },
   {

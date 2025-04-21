@@ -7,10 +7,6 @@ const ProjectSchema = new mongoose.Schema(
       require: true,
       unique: true,
     },
-    // name: {
-    //   type: String,
-    //   required: true,
-    // },
     category: {
       type: String,
       require: true,
@@ -45,7 +41,7 @@ const ProjectSchema = new mongoose.Schema(
       require: true,
       enum: ["Marketing Team", "Dev Team", "Design Team"],
     },
-     startDate: {
+    startDate: {
       type: Date,
       required: true,
     },
@@ -53,7 +49,7 @@ const ProjectSchema = new mongoose.Schema(
       type: Date,
       required: true,
     },
-      priority: {
+    priority: {
       type: String,
       required: true,
       enum: ["Low", "Medium", "High"],
@@ -68,7 +64,6 @@ const ProjectSchema = new mongoose.Schema(
       enum: ["New", "In Progress", "Completed", "Hold", "Active"],
       default: "Pending",
     },
- 
   },
   {
     timestamps: true,

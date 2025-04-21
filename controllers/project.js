@@ -1,78 +1,8 @@
 const Project = require("../models/project");
 const mongoose = require("mongoose");
+const task = require("../models/task");
 
 // Create project
-// exports.createProject = async (req, res) => {
-//   try {
-//     const {
-//       title,
-//       category,
-//       description,
-//       companyName,
-//       contactPerson,
-//       contactPhone,
-//       contactEmail,
-//       address,
-//       assignedTo,
-//       notes,
-//       status,
-//     } = req.body;
-
-//     if (
-//       !title ||
-//       !category ||
-//       !description ||
-//       !companyName ||
-//       !contactPerson ||
-//       !contactPhone ||
-//       !contactEmail ||
-//       !address ||
-//       !assignedTo ||
-//       !notes
-//     ) {
-//       return res
-//         .status(400)
-//         .json({ success: false, message: "All fields are required" });
-//     }
-
-//     // Ensure user is authenticated
-//     if (!req.user || !req.user.name) {
-//       return res.status(401).json({ success: false, message: "Unauthorized" });
-//     }
-
-//     const projectExists = await Project.findOne({ title });
-//     if (projectExists) {
-//       return res
-//         .status(400)
-//         .json({ success: false, message: "Project already exists" });
-//     }
-
-//     const newProject = await Project.create({
-//       title,
-//       name: req.user.name, // auto-filled from logged-in user
-//       category,
-//       description,
-//       companyName,
-//       contactPerson,
-//       contactPhone,
-//       contactEmail,
-//       address,
-//       assignedTo,
-//       notes,
-//       status: status || "Pending",
-//     });
-
-//     res.status(201).json({
-//       success: true,
-//       message: "Project created successfully!",
-//       data: newProject,
-//     });
-//   } catch (error) {
-//     console.error("Error creating project:", error);
-//     res.status(500).json({ success: false, message: "Server error" });
-//   }
-// };
-
 exports.createProject = async (req, res) => {
   try {
     const {
@@ -87,9 +17,9 @@ exports.createProject = async (req, res) => {
       assignedTo,
       notes,
       status,
-      priority,       // Include priority
-      startDate,      // Include startDate
-      endDate,        // Include endDate
+      priority,
+      startDate,
+      endDate,
     } = req.body;
 
     // Validate required fields
@@ -102,9 +32,9 @@ exports.createProject = async (req, res) => {
       !contactPhone ||
       !contactEmail ||
       !address ||
-      !priority ||    // Check for priority
-      !startDate ||   // Check for startDate
-      !endDate        // Check for endDate
+      !priority ||
+      !startDate ||
+      !endDate
     ) {
       return res
         .status(400)
@@ -132,9 +62,9 @@ exports.createProject = async (req, res) => {
       assignedTo,
       notes,
       status: status || "Pending",
-      priority,       // Save priority
-      startDate,      // Save startDate
-      endDate,        // Save endDate
+      priority, // Save priority
+      startDate, // Save startDate
+      endDate, // Save endDate
     });
 
     // Send response
@@ -148,7 +78,6 @@ exports.createProject = async (req, res) => {
     res.status(500).json({ success: false, message: "Server error" });
   }
 };
-
 
 // Get project by ID
 exports.getProjectById = async (req, res) => {
@@ -188,12 +117,46 @@ exports.getAllProjects = async (req, res) => {
         .json({ success: false, message: "No projects found" });
     }
 
-    res.status(200).json({ success: true, data: projects });
+    const projectsWithTasks = await Promise.all(
+      projects.map(async (project) => {
+        const tasks = await task.find({ title: project.title });
+        return {
+          ...project._doc,
+          tasks,
+        };
+      })
+    );
+
+    res.status(200).json({
+      success: true,
+      message: "Projects fetched successfully",
+      data: projectsWithTasks,
+    });
   } catch (error) {
     console.error("Error fetching projects:", error);
     res.status(500).json({ success: false, message: "Server error" });
   }
 };
+// exports.getAllProjects = async (req, res) => {
+//   try {
+//     const projects = await Project.find({});
+
+//     if (!projects || projects.length === 0) {
+//       return res
+//         .status(404)
+//         .json({ success: false, message: "No projects found" });
+//     }
+
+//     res.status(200).json({
+//       success: true,
+//       message: "project Fetch Successfully",
+//       data: projects,
+//     });
+//   } catch (error) {
+//     console.error("Error fetching projects:", error);
+//     res.status(500).json({ success: false, message: "Server error" });
+//   }
+// };
 
 // Update project by ID (PUT request)
 exports.updateProjectById = async (req, res) => {
