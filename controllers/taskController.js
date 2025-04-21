@@ -16,11 +16,9 @@ exports.createTask = async (req, res) => {
       endDate,
     } = req.body;
 
-    // Trim string fields
     title = title?.trim();
     taskName = taskName?.trim();
     priority = priority?.trim();
-    // Check if assignedToWork is an array, then trim each user name
     if (Array.isArray(assignedToWork)) {
       assignedToWork = assignedToWork.map((name) => name.trim());
     } else {
@@ -31,17 +29,15 @@ exports.createTask = async (req, res) => {
     }
     status = status?.trim();
 
-    // Convert date strings to timestamps (or use Date if your schema supports it)
     const startTimestamp = new Date(startDate).getTime();
     const endTimestamp = new Date(endDate).getTime();
 
-    // Required field check
     if (
       !title ||
       !taskName ||
       !hours ||
       !priority ||
-      !assignedToWork ||
+      !assignedToWork.length ||
       !status ||
       !startTimestamp ||
       !endTimestamp
@@ -52,23 +48,9 @@ exports.createTask = async (req, res) => {
       });
     }
 
-    // Validate taskName against allowed values
-    const validTaskNames = [
-      "UI_Design",
-      "UI_Creation",
-      "Testing",
-      "Integraton",
-    ];
-    if (!validTaskNames.includes(taskName)) {
-      return res.status(400).json({
-        success: false,
-        message: `Invalid taskName. Allowed values are: ${validTaskNames.join(
-          ", "
-        )}`,
-      });
-    }
-
-    // Find related project
+    // prevent duplicate taskName under the same project
+    // let taskExists = await Task.findOne({ title, taskName });
+    //if not prevent then use this
     const project = await Project.findOne({ title });
     if (!project) {
       return res.status(404).json({
@@ -77,58 +59,39 @@ exports.createTask = async (req, res) => {
       });
     }
 
-    // Validate assigned user
-    const assignedName = await User.findOne({ name: assignedToWork });
-    if (!assignedName) {
+    // Validate all assigned users
+    const usersExist = await User.find({
+      name: { $in: assignedToWork },
+    });
+
+    if (usersExist.length !== assignedToWork.length) {
       return res.status(404).json({
         success: false,
-        message: "Assigned User Name not found",
+        message: "One or more assigned users not found",
       });
     }
 
-    // Check for existing task
-    let taskExists = await Task.findOne({ title });
+    // Create new task (no uniqueness check)
+    const newTask = new Task({
+      title,
+      taskName,
+      category: project.category,
+      assignedTo: project.assignedTo,
+      hours,
+      priority,
+      assignedToWork,
+      startDate: startTimestamp,
+      endDate: endTimestamp,
+      status,
+    });
 
-    if (taskExists) {
-      // Update task
-      taskExists.taskName = taskName;
-      taskExists.hours = hours;
-      taskExists.startDate = startTimestamp;
-      taskExists.endDate = endTimestamp;
-      taskExists.priority = priority;
-      taskExists.assignedToWork = assignedToWork;
-      taskExists.status = status;
+    await newTask.save();
 
-      taskExists = await taskExists.save();
-
-      return res.status(200).json({
-        success: true,
-        message: "Task updated",
-        data: taskExists,
-      });
-    } else {
-      // Create task
-      const newTask = new Task({
-        title,
-        taskName,
-        category: project.category,
-        assignedTo: project.assignedTo,
-        hours,
-        priority,
-        assignedToWork,
-        startDate: startTimestamp,
-        endDate: endTimestamp,
-        status,
-      });
-
-      await newTask.save();
-
-      return res.status(201).json({
-        success: true,
-        message: "Task created",
-        data: newTask,
-      });
-    }
+    return res.status(201).json({
+      success: true,
+      message: "Task created",
+      data: newTask,
+    });
   } catch (error) {
     console.error("Error creating task:", error);
     return res.status(500).json({

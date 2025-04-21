@@ -5,7 +5,6 @@ const TaskSchema = new mongoose.Schema(
     title: {
       type: String,
       required: true,
-      unique: true,
     },
     taskName: {
       type: String,
@@ -41,6 +40,12 @@ const TaskSchema = new mongoose.Schema(
     },
     assignedToWork: {
       type: [{
+    type: String,
+  }],
+      required: true,
+    },
+    Reviwer: {
+         type: [{
     type: String,
   }],
       required: true,

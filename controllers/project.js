@@ -87,8 +87,12 @@ exports.createProject = async (req, res) => {
       assignedTo,
       notes,
       status,
+      priority,       // Include priority
+      startDate,      // Include startDate
+      endDate,        // Include endDate
     } = req.body;
 
+    // Validate required fields
     if (
       !title ||
       !category ||
@@ -97,13 +101,17 @@ exports.createProject = async (req, res) => {
       !contactPerson ||
       !contactPhone ||
       !contactEmail ||
-      !address
+      !address ||
+      !priority ||    // Check for priority
+      !startDate ||   // Check for startDate
+      !endDate        // Check for endDate
     ) {
       return res
         .status(400)
         .json({ success: false, message: "All fields are required" });
     }
 
+    // Validate if project with the same title already exists
     const projectExists = await Project.findOne({ title });
     if (projectExists) {
       return res
@@ -111,6 +119,7 @@ exports.createProject = async (req, res) => {
         .json({ success: false, message: "Project already exists" });
     }
 
+    // Create new project
     const newProject = await Project.create({
       title,
       category,
@@ -123,8 +132,12 @@ exports.createProject = async (req, res) => {
       assignedTo,
       notes,
       status: status || "Pending",
+      priority,       // Save priority
+      startDate,      // Save startDate
+      endDate,        // Save endDate
     });
 
+    // Send response
     res.status(201).json({
       success: true,
       message: "Project created successfully!",
@@ -135,6 +148,7 @@ exports.createProject = async (req, res) => {
     res.status(500).json({ success: false, message: "Server error" });
   }
 };
+
 
 // Get project by ID
 exports.getProjectById = async (req, res) => {

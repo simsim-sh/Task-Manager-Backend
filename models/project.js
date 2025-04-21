@@ -45,6 +45,19 @@ const ProjectSchema = new mongoose.Schema(
       require: true,
       enum: ["Marketing Team", "Dev Team", "Design Team"],
     },
+     startDate: {
+      type: Date,
+      required: true,
+    },
+    endDate: {
+      type: Date,
+      required: true,
+    },
+      priority: {
+      type: String,
+      required: true,
+      enum: ["Low", "Medium", "High"],
+    },
     notes: {
       type: String,
       require: true,
@@ -55,10 +68,7 @@ const ProjectSchema = new mongoose.Schema(
       enum: ["New", "In Progress", "Completed", "Hold", "Active"],
       default: "Pending",
     },
-      endDate: {
-      type: Date,
-      required: true,
-    },
+ 
   },
   {
     timestamps: true,
