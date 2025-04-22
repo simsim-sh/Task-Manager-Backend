@@ -165,6 +165,39 @@ exports.getTaskById = async (req, res) => {
   }
 };
 
+// Update task by ID
+exports.updateTaskById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updates = req.body; // whatever fields you want to update
+
+    const updatedTask = await Task.findByIdAndUpdate(id, updates, {
+      new: true, // return the updated document
+      runValidators: true, // validate fields while updating
+    });
+
+    if (!updatedTask) {
+      return res.status(404).json({
+        success: false,
+        message: "Task not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Task updated successfully",
+      data: updatedTask,
+    });
+  } catch (error) {
+    console.error("Error updating task:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
+};
+
+
 // Delete task by ID
 exports.deleteTaskByTitle = async (req, res) => {
   try {
