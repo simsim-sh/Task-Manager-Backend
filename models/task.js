@@ -15,7 +15,7 @@ const TaskSchema = new mongoose.Schema(
       require: true,
       enum: ["design", "development", "marketing"],
     },
-     description: {
+    description: {
       type: String,
       require: true,
     },
