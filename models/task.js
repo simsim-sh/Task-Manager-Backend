@@ -15,6 +15,18 @@ const TaskSchema = new mongoose.Schema(
       require: true,
       enum: ["design", "development", "marketing"],
     },
+     description: {
+      type: String,
+      require: true,
+    },
+    onHoldReason: {
+      type: String,
+      require: true,
+    },
+    onHoldDescription: {
+      type: String,
+      require: true,
+    },
     assignedTo: {
       type: String,
       required: true,
@@ -45,7 +57,15 @@ const TaskSchema = new mongoose.Schema(
       ],
       required: true,
     },
-    Reviwer: {
+    reviewer1: {
+      type: [
+        {
+          type: String,
+        },
+      ],
+      required: true,
+    },
+    reviewer2: {
       type: [
         {
           type: String,

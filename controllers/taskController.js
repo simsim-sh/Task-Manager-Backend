@@ -13,7 +13,12 @@ exports.createTask = async (req, res) => {
       assignedToWork,
       status,
       startDate,
+      reviewer1,
+      reviewer2,
       endDate,
+      description,
+      onHoldReason,
+      onHoldDescription,
     } = req.body;
 
     title = title?.trim();
@@ -83,6 +88,11 @@ exports.createTask = async (req, res) => {
       startDate: startTimestamp,
       endDate: endTimestamp,
       status,
+       reviewer1,
+      reviewer2,
+      description,
+      onHoldReason,
+      onHoldDescription,
     });
 
     await newTask.save();
