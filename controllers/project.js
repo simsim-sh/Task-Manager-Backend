@@ -1,6 +1,6 @@
 const Project = require("../models/project");
 const mongoose = require("mongoose");
-const task = require("../models/task");
+const Task = require("../models/task");
 
 // Create project
 exports.createProject = async (req, res) => {
@@ -84,22 +84,40 @@ exports.getProjectById = async (req, res) => {
   try {
     // Validate the projectId format
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Invalid project ID" });
+      return res.status(400).json({
+        success: false,
+        message: "Invalid project ID",
+      });
     }
 
     // Find the project by ID
     const project = await Project.findById(req.params.id);
 
     if (!project) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Project not found" });
+      return res.status(404).json({
+        success: false,
+        message: "Project not found",
+      });
     }
-    console.log("Project found:", project); // Log the found project for debugging
 
-    res.status(200).json({ success: true, data: project });
+    // Show all created task details for the project based on its title
+    const tasks = await Task.find({ title: project.title });
+
+    // Combining the project details and tasks into one object
+    const projectWithTasks = {
+      ...project._doc,
+      tasks,
+    };
+
+    // Log the result to verify
+    console.log("Project found with tasks:", projectWithTasks);
+
+    // Return the response with the project and its associated tasks
+    res.status(200).json({
+      success: true,
+      message: "Project fetched successfully.",
+      data: projectWithTasks,
+    });
   } catch (error) {
     console.error("Error fetching project:", error);
     res.status(500).json({ success: false, message: "Server error" });
@@ -117,9 +135,10 @@ exports.getAllProjects = async (req, res) => {
         .json({ success: false, message: "No projects found" });
     }
 
+    //show All created task detail for project
     const projectsWithTasks = await Promise.all(
       projects.map(async (project) => {
-        const tasks = await task.find({ title: project.title });
+        const tasks = await Task.find({ title: project.title });
         return {
           ...project._doc,
           tasks,
@@ -134,29 +153,12 @@ exports.getAllProjects = async (req, res) => {
     });
   } catch (error) {
     console.error("Error fetching projects:", error);
-    res.status(500).json({ success: false, message: "Server error" });
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
   }
 };
-// exports.getAllProjects = async (req, res) => {
-//   try {
-//     const projects = await Project.find({});
-
-//     if (!projects || projects.length === 0) {
-//       return res
-//         .status(404)
-//         .json({ success: false, message: "No projects found" });
-//     }
-
-//     res.status(200).json({
-//       success: true,
-//       message: "project Fetch Successfully",
-//       data: projects,
-//     });
-//   } catch (error) {
-//     console.error("Error fetching projects:", error);
-//     res.status(500).json({ success: false, message: "Server error" });
-//   }
-// };
 
 // Update project by ID (PUT request)
 exports.updateProjectById = async (req, res) => {
