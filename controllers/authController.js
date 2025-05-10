@@ -278,30 +278,28 @@
 //   }
 // };
 
-
-
 // === /controllers/authController.js ===
-const User = require('../models/User');
+const User = require("../models/User");
 
 // Helper function to send token response
 const sendTokenResponse = (user, statusCode, res) => {
   // Create token
   const token = user.getSignedJwtToken();
-  
+
   const options = {
     expires: new Date(
       Date.now() + process.env.JWT_COOKIE_EXPIRE * 24 * 60 * 60 * 1000
     ),
-    httpOnly: true
+    httpOnly: true,
   };
-  
-  if (process.env.NODE_ENV === 'production') {
+
+  if (process.env.NODE_ENV === "production") {
     options.secure = true;
   }
-  
+
   res
     .status(statusCode)
-    .cookie('token', token, options)
+    .cookie("token", token, options)
     .json({
       success: true,
       token,
@@ -309,8 +307,8 @@ const sendTokenResponse = (user, statusCode, res) => {
         id: user._id,
         name: user.name,
         email: user.email,
-        role: user.role
-      }
+        role: user.role,
+      },
     });
 };
 
@@ -329,30 +327,37 @@ exports.registerAdmin = async (req, res, next) => {
       postModule,
       status,
       role,
-      termsAccepted
+      termsAccepted,
     } = req.body;
 
     // First user registration
     if (userCount === 0) {
-      if (role !== 'admin') {
+      if (role !== "admin") {
         return res.status(400).json({
           success: false,
-          error: 'The first registered user must be an admin.'
+          error: "The first registered user must be an admin.",
         });
       }
     } else {
       // Prevent public registration after the first user
       return res.status(403).json({
         success: false,
-        error: 'Registration not allowed. Only admin can create new users.'
+        error: "Registration not allowed. Only admin can create new users.",
       });
     }
 
     // Basic validation
-    if (!name || !email || !password  || !designation || !permission || !postModule) {
+    if (
+      !name ||
+      !email ||
+      !password ||
+      !designation ||
+      !permission ||
+      !postModule
+    ) {
       return res.status(400).json({
         success: false,
-        error: 'All required fields must be provided.'
+        error: "All required fields must be provided.",
       });
     }
 
@@ -361,59 +366,59 @@ exports.registerAdmin = async (req, res, next) => {
       name,
       email,
       password,
-      role: 'admin',
+      role: "admin",
       designation,
       permission,
       postModule,
       status,
-      termsAccepted
+      termsAccepted,
     });
 
     sendTokenResponse(admin, 200, res);
   } catch (err) {
-    console.error('Register Error:', err);
+    console.error("Register Error:", err);
     return res.status(500).json({
       success: false,
-      error: 'Server error during registration.'
+      error: "Server error during registration.",
     });
   }
 };
 
-
-
-// login 
+// login
 exports.login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
-    
+
     // Validate email & password
     if (!email || !password) {
       return res.status(400).json({
         success: false,
-        error: 'Please provide an email and password'
+        error: "Please provide an email and password",
       });
     }
-    
+
     // Check for user
-    const user = await User.findOne({ email }).select('+password');
-    
+    const user = await User.findOne({ email }).select("+password");
+
     if (!user) {
       return res.status(401).json({
         success: false,
-        error: 'Invalid credentials'
+        error: "Invalid credentials",
       });
     }
-    
+
+    console.log(user);
+
     // Check if password matches
     const isMatch = await user.matchPassword(password);
-    
+
     if (!isMatch) {
       return res.status(401).json({
         success: false,
-        error: 'Invalid credentials'
+        error: "Invalid credentials",
       });
     }
-    
+
     sendTokenResponse(user, 200, res);
   } catch (err) {
     next(err);
@@ -425,10 +430,10 @@ exports.login = async (req, res, next) => {
 exports.getMe = async (req, res, next) => {
   try {
     const user = await User.findById(req.user.id);
-    
+
     res.status(200).json({
       success: true,
-      data: user
+      data: user,
     });
   } catch (err) {
     next(err);
