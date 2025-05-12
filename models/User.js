@@ -87,9 +87,11 @@ const UserSchema = new mongoose.Schema({
   designation: {
     type: String
   },
-  permission: {
-    type: String
-  },
+permission: {
+  type: [String],
+  enum: ['read', 'write', 'admin'],
+  default: []
+},
   postModule: {
     type: String
   },
