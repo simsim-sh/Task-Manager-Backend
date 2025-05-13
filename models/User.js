@@ -49,8 +49,48 @@ const UserSchema = new mongoose.Schema(
       required: true,
     },
   },
-  {
-    timestamps: true,
+  email: {
+    type: String,
+    required: [true, 'Please add an email'],
+    unique: true,
+    match: [
+      /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
+      'Please add a valid email'
+    ]
+  },
+  password: {
+    type: String,
+    required: [true, 'Please add a password'],
+    minlength: 6,
+    select: false
+  },
+  role: {
+    type: String,
+    enum: ['user', 'admin'],
+    default: 'user'
+  },
+  designation: {
+    type: String
+  },
+permission: {
+  type: [String],
+  enum: ['read', 'write', 'admin'],
+  default: []
+},
+  postModule: {
+    type: String
+  },
+  status: {
+    type: String,
+    enum: ['active', 'inactive'],
+  },
+  termsAccepted: {
+    type: Boolean,
+    default: false
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now
   }
 );
 
