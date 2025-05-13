@@ -2,6 +2,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 
+//register user
 exports.registerUser = async (req, response) => {
   const {
     name,
@@ -9,14 +10,18 @@ exports.registerUser = async (req, response) => {
     password,
     userType,
     designation,
+    department,
     permission,
     postModule,
     status,
     termsAccepted,
   } = req.body;
 
-  if (!password) {
-    return response.status(400).json({ message: "Password is required" });
+  if (!name || !password || !email || !department || !userType) {
+    return response.status(400).json({
+      status: false,
+      message: "All Field is required",
+    });
   }
 
   try {
@@ -51,6 +56,7 @@ exports.registerUser = async (req, response) => {
       email,
       password: hashedPassword,
       // password,
+      department,
       userType,
       designation,
       permission,
@@ -76,6 +82,7 @@ exports.registerUser = async (req, response) => {
         email: newUser.email,
         userType: newUser.userType,
         designation: newUser.designation,
+        department: newUser.department,
         permission: newUser.permission,
         postModule: newUser.postModule,
         status: newUser.status,
@@ -88,22 +95,34 @@ exports.registerUser = async (req, response) => {
   }
 };
 
+//login user
 exports.loginUser = async (req, response) => {
   const { email, password } = req.body;
 
+  if (!password || !email) {
+    return response.status(400).json({
+      status: false,
+      message: "All Field is required",
+    });
+  }
+
   try {
     const user = await User.findOne({ email });
+
     if (!user) {
-      return response
-        .status(400)
-        .json({ success: false, message: "Invalid name credentials" });
+      return response.status(400).json({
+        success: false,
+        message: "Invalid name credentials",
+      });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
+
     if (!isMatch) {
-      return response
-        .status(400)
-        .json({ success: false, message: "Invalid password credentials" });
+      return response.status(400).json({
+        success: false,
+        message: "Invalid password credentials",
+      });
     }
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
@@ -118,11 +137,15 @@ exports.loginUser = async (req, response) => {
         id: user._id,
         name: user.name,
         email: user.email,
+        userType: user.userType,
       },
     });
   } catch (error) {
     console.error(error);
-    response.status(500).json({ success: false, message: "Server error" });
+    response.status(500).json({
+      success: false,
+      message: "Server error",
+    });
   }
 };
 

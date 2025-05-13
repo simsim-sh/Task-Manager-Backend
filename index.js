@@ -8,7 +8,6 @@ const projectRoutes = require("./routes/project.js");
 const taskRoutes = require("./routes/taskRoutes.js");
 const activityRoutes = require("./routes/activityRoutes");
 const errorHandler = require("./middleware/error.js");
-const userRoutes = require("./routes/userRoutes");
 
 dotenv.config();
 
@@ -28,7 +27,6 @@ app.use(
 
 //  Routes
 app.use("/api/auth", authRoutes);
-app.use("/api/users", userRoutes);
 app.use("/api/project", projectRoutes);
 app.use("/api/task", taskRoutes);
 app.use("/api/activity", activityRoutes);
