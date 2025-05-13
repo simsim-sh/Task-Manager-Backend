@@ -1,97 +1,56 @@
 const mongoose = require("mongoose");
 
-const UserSchema = new mongoose.Schema(
-  {
-    email: {
-      type: String,
-      required: true,
-      unique: true,
-    },
-    name: {
-      type: String,
-      required: true,
-    },
-    password: {
-      type: String,
-      required: true,
-    },
-    userType: {
-      type: String,
-      required: true,
-      enum: ["admin", "user", "manager"],
-    },
-    designation: {
-      type: String,
-      required: true,
-    },
-    department: {
-      type: String,
-      required: true,
-      enum: ["hr", "marketing", "finance", "it"],
-    },
-    permission: {
-      type: [String],
-      required: true,
-      enum: ["read", "write", "admin"],
-    },
-    postModule: {
-      type: [String],
-      required: true,
-      enum: ["blog", "news", "project"],
-    },
-    status: {
-      type: String,
-      default: "active",
-      enum: ["active", "inactive"],
-    },
-    termsAccepted: {
-      type: Boolean,
-      required: true,
-    },
-  },
+const UserSchema = new mongoose.Schema({
   email: {
     type: String,
-    required: [true, 'Please add an email'],
+    required: true,
     unique: true,
-    match: [
-      /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
-      'Please add a valid email'
-    ]
+  },
+  name: {
+    type: String,
+    required: true,
   },
   password: {
     type: String,
-    required: [true, 'Please add a password'],
-    minlength: 6,
-    select: false
+    required: true,
   },
-  role: {
+  userType: {
     type: String,
-    enum: ['user', 'admin'],
-    default: 'user'
+    required: true,
+    enum: ["admin", "user", "manager"],
   },
   designation: {
-    type: String
+    type: String,
+    required: true,
   },
-permission: {
-  type: [String],
-  enum: ['read', 'write', 'admin'],
-  default: []
-},
+  department: {
+    type: String,
+    required: true,
+    enum: ["hr", "marketing", "finance", "it"],
+  },
+  permission: {
+    type: [String],
+    required: true,
+    enum: ["read", "write", "admin"],
+  },
   postModule: {
-    type: String
+    type: [String],
+    required: true,
+    enum: ["blog", "news", "project"],
   },
   status: {
     type: String,
-    enum: ['active', 'inactive'],
+    default: "active",
+    enum: ["active", "inactive"],
   },
   termsAccepted: {
     type: Boolean,
-    default: false
+    required: true,
   },
   createdAt: {
     type: Date,
-    default: Date.now
-  }
-);
+    default: Date.now,
+  },
+});
 
 module.exports = mongoose.model("User", UserSchema);
